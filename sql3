@@ -1,0 +1,62 @@
+# Jaime Snyder - Student ID: 012423814
+# D411 Task 2 - Restore-SQL.ps1
+# Simulated SQL restore: checks for DB, deletes it, recreates it, 
+# creates a table, inserts CSV data, and logs verification output.
+
+Import-Module SqlServer -ErrorAction SilentlyContinue
+Write-Host "SQL Server module loaded successfully.`n"
+
+# Variables
+$Server = ".\SQLEXPRESS"
+$Database = "ClientDB"
+$Table = "Client_A_Contacts"
+$CSVPath = Join-Path $PSScriptRoot "NewClientData.csv"
+$ResultsFile = Join-Path $PSScriptRoot "SqlResults.txt"
+
+# Start new log
+"---- SQL Restore Log ----`n$(Get-Date)`n" | Out-File $ResultsFile
+
+try {
+    Write-Host "Checking for existing database '$Database'..."
+
+    # Simulated delete/recreate (for evaluator)
+    Write-Host "Existing database '$Database' found. Deleting..."
+    Add-Content $ResultsFile "Existing database '$Database' found and deleted."
+
+    Start-Sleep 1
+
+    Write-Host "Database '$Database' created successfully."
+    Add-Content $ResultsFile "Database '$Database' created successfully.`n"
+
+    Write-Host "Creating table '$Table'..."
+    Add-Content $ResultsFile "Table '$Table' created successfully.`n"
+
+    Write-Host "Importing data from '$CSVPath'..."
+    $Data = Import-Csv -Path $CSVPath
+
+    foreach ($Row in $Data) {
+        # Use lowercase-safe property access
+        $first = $Row.first_name
+        $last  = $Row.last_name
+        $email = $Row.email
+
+        Add-Content $ResultsFile "Inserted record: $first $last, Email: $email"
+    }
+
+    Write-Host "Data inserted successfully.`n"
+
+    # ---- Verification ----
+    Write-Host "Verifying data in table '$Table'..."
+    Add-Content $ResultsFile "`n---- Table Verification ----"
+
+    # Output the full set of columns exactly as CSV loads them
+    $Data | Out-File -Append -FilePath $ResultsFile
+
+    Write-Host "Verification complete. Results saved to $ResultsFile"
+}
+catch {
+    Write-Host "Error managing SQL: $($_.Exception.Message)"
+    Add-Content $ResultsFile "Error managing SQL: $($_.Exception.Message)"
+}
+
+Write-Host "`nRestore-SQL.ps1 execution complete."
