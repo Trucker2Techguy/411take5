@@ -1,0 +1,12 @@
+https://aka.ms/vscode-powershell
+Type 'help' to get help.
+
+PS C:\Users\LabAdmin\Desktop\Requirements2>
+PS C:\Users\LabAdmin\Desktop\Requirements2> . 'C:\Users\LabAdmin\Desktop\Requirements2\Restore-AD.ps1'
+ParserError: C:\Users\LabAdmin\Desktop\Requirements2\Restore-AD.ps1:45:56
+Line |
+  45 |  …         Add-Content $ResultsFile "Failed to create $UserName: $($_.Ex …
+     |                                                       ~~~~~~~~~~
+     | Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit
+     | the name.
+PS C:\Users\LabAdmin\Desktop\Requirements2>
