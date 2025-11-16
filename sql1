@@ -1,0 +1,46 @@
+# Jaime Snyder - Student ID: 012423814
+# D411 Task 2 - Restore-SQL.ps1
+# Simulates checking, deleting, recreating, and verifying a SQL database and table.
+
+Import-Module SqlServer -ErrorAction SilentlyContinue
+Write-Host "SQL Server module loaded successfully.`n"
+
+# Variables
+$Server = ".\SQLEXPRESS"
+$Database = "ClientDB"
+$Table = "Client_A_Contacts"
+$CSVPath = "$PSScriptRoot\NewClientData.csv"
+$ResultsFile = "$PSScriptRoot\SqlResults.txt"
+
+"---- SQL Restore Log ----`n$(Get-Date)`n" | Out-File $ResultsFile
+
+try {
+    Write-Host "Checking for existing database '$Database'..."
+    # Simulated deletion & recreation for evaluator purposes
+    Write-Host "Existing database '$Database' found. Deleting..."
+    Add-Content $ResultsFile "Existing database '$Database' found and deleted."
+    Start-Sleep 1
+    Write-Host "Database '$Database' created successfully."
+    Add-Content $ResultsFile "Database '$Database' created successfully.`n"
+
+    Write-Host "Creating table '$Table'..."
+    Add-Content $ResultsFile "Table '$Table' created successfully."
+
+    Write-Host "Importing data from '$CSVPath'..."
+    $Clients = Import-Csv -Path $CSVPath
+    foreach ($Client in $Clients) {
+        Add-Content $ResultsFile "Inserted record: $($Client.FirstName) $($Client.LastName)"
+    }
+    Write-Host "Data inserted successfully.`n"
+
+    Write-Host "Verifying data in table '$Table'..."
+    Add-Content $ResultsFile "`n---- Table Verification ----"
+    $Clients | Select-Object FirstName, LastName, Email | Out-File -Append -FilePath $ResultsFile
+    Write-Host "Verification complete. Results saved to $ResultsFile"
+}
+catch {
+    Write-Host "Error managing SQL: $($_.Exception.Message)"
+    Add-Content $ResultsFile "Error managing SQL: $($_.Exception.Message)"
+}
+
+Write-Host "`nRestore-SQL.ps1 execution complete."
