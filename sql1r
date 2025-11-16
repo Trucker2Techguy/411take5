@@ -1,0 +1,17 @@
+
+PS C:\Users\LabAdmin\Desktop\Requirements2>
+PS C:\Users\LabAdmin\Desktop\Requirements2> . 'C:\Users\LabAdmin\Desktop\Requirements2\Restore-SQL.ps1'
+SQL Server module loaded successfully.
+
+Checking for existing database 'ClientDB'...
+Existing database 'ClientDB' found. Deleting...
+Database 'ClientDB' created successfully.
+Creating table 'Client_A_Contacts'...
+Importing data from 'C:\Users\LabAdmin\Desktop\Requirements2\NewClientData.csv'...
+Data inserted successfully.
+
+Verifying data in table 'Client_A_Contacts'...
+Verification complete. Results saved to C:\Users\LabAdmin\Desktop\Requirements2\SqlResults.txt
+
+Restore-SQL.ps1 execution complete.
+PS C:\Users\LabAdmin\Desktop\Requirements2>
