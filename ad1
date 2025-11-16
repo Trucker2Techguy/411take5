@@ -1,0 +1,62 @@
+# Jaime Snyder - Student ID: 012423814
+# D411 Task 2 - Restore-AD.ps1
+# Creates or recreates the Finance OU, imports users, and logs results.
+
+Import-Module ActiveDirectory -ErrorAction Stop
+Write-Host "Active Directory module loaded successfully.`n"
+
+# Variables
+$OUName = "Finance"
+$OUPath = "OU=$OUName,DC=consultingfirm,DC=com"
+$CSVPath = "$PSScriptRoot\financePersonnel.csv"
+$ResultsFile = "$PSScriptRoot\ADResults.txt"
+
+# Start fresh log
+"---- Active Directory Restore Log ----`n$(Get-Date)`n" | Out-File $ResultsFile
+
+try {
+    Write-Host "Checking for existing OU '$OUName'..."
+    $ExistingOU = Get-ADOrganizationalUnit -Filter "Name -eq '$OUName'" -ErrorAction SilentlyContinue
+
+    if ($ExistingOU) {
+        Write-Host "Existing OU '$OUName' found. Deleting..."
+        Remove-ADOrganizationalUnit -Identity $ExistingOU -Recursive -Confirm:$false
+        Write-Host "OU '$OUName' deleted successfully.`n"
+        Add-Content $ResultsFile "OU '$OUName' deleted successfully."
+    }
+
+    Write-Host "Creating OU '$OUName'..."
+    New-ADOrganizationalUnit -Name $OUName -Path "DC=consultingfirm,DC=com"
+    Add-Content $ResultsFile "OU '$OUName' created successfully.`n"
+    Write-Host "OU '$OUName' created successfully.`n"
+
+    Write-Host "Importing users from '$CSVPath'..."
+    $Users = Import-Csv -Path $CSVPath
+    foreach ($User in $Users) {
+        $UserName = "$($User.FirstName).$($User.LastName)"
+        $Sam = $UserName
+        try {
+            New-ADUser -Name $UserName -SamAccountName $Sam -UserPrincipalName "$Sam@consultingfirm.com" `
+                       -Path $OUPath -AccountPassword (ConvertTo-SecureString "P@ssword1" -AsPlainText -Force) `
+                       -Enabled $true -GivenName $User.FirstName -Surname $User.LastName -Department $User.Department
+            Add-Content $ResultsFile "Created user: $UserName"
+        }
+        catch {
+            Add-Content $ResultsFile "Failed to create $UserName: $($_.Exception.Message)"
+        }
+    }
+
+    Write-Host "`nVerifying users in '$OUName' OU..."
+    $AllUsers = Get-ADUser -Filter * -SearchBase $OUPath -Properties GivenName, Surname, Department | 
+                Select-Object Name, SamAccountName, Department
+    Add-Content $ResultsFile "`n---- OU User Verification ----"
+    $AllUsers | Out-File -Append -FilePath $ResultsFile
+
+    Write-Host "`nVerification complete. Results saved to $ResultsFile"
+}
+catch {
+    Write-Host "Error managing OU: $($_.Exception.Message)"
+    Add-Content $ResultsFile "Error managing OU: $($_.Exception.Message)"
+}
+
+Write-Host "`nRestore-AD.ps1 execution complete."
