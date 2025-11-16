@@ -1,0 +1,9 @@
+PS C:\Users\LabAdmin\Desktop\Requirements2>
+PS C:\Users\LabAdmin\Desktop\Requirements2> . 'C:\Users\LabAdmin\Desktop\Requirements2\Restore-AD.ps1'
+ParserError: C:\Users\LabAdmin\Desktop\Requirements2\Restore-AD.ps1:46:56
+Line |
+  46 |  …         Add-Content $ResultsFile "Failed to create $UserName: $(${_.E …
+     |                                                       ~~~~~~~~~~
+     | Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit
+     | the name.
+PS C:\Users\LabAdmin\Desktop\Requirements2>
