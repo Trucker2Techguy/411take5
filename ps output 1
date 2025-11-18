@@ -1,0 +1,12 @@
+
+PS C:\Users\LabAdmin> cd desktop
+PS C:\Users\LabAdmin\Desktop> cd requirements2
+PS C:\Users\LabAdmin\Desktop\Requirements2> .\restore-ad.ps1
+Active Directory module loaded successfully.
+
+Checking for existing OU 'Finance'...
+Existing OU 'Finance' found. Deleting...
+Error managing OU: Access is denied.
+
+Restore-AD.ps1 execution complete.
+PS C:\Users\LabAdmin\Desktop\Requirements2>
